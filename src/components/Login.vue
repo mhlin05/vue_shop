@@ -9,7 +9,7 @@
       <el-form
         :model="loginForm"
         :rules="LoginRules"
-        ref="loginForm"
+        ref="loginFormRef"
         class="login_form"
       >
         <!-- 用户名 -->
@@ -20,17 +20,17 @@
           ></el-input>
         </el-form-item>
         <!-- 密码 -->
-        <el-form-item prop="pwd">
+        <el-form-item prop="password">
           <el-input
             type="password"
             prefix-icon="el-icon-lock"
-            v-model="loginForm.pwd"
+            v-model="loginForm.password"
           ></el-input>
         </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item class="btns">
-          <el-button type="primary" @click="myLogin('loginForm')">登陆</el-button>
-          <el-button type="info" @click="resetForm('loginForm')"
+          <el-button type="primary" @click='login'>登陆</el-button>
+          <el-button type="info" @click='resetForm'
             >重置</el-button
           >
         </el-form-item>
@@ -45,28 +45,33 @@ export default {
     return {
       // 登陆信息
       loginForm: {
-        username: '',
-        pwd: ''
+        username: 'admin',
+        password: '123456'
       },
       // 登陆规则
       LoginRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
-        pwd: [
+        password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
-    resetForm (formName) {
-      console.log('ddd')
-      this.$refs[formName].resetFields()
+    resetForm () {
+      this.$refs.loginFormRef.resetFields()
     },
-    myLogin (formName) {
-      this.$refs[formName].validate(res => {
+    login () {
+      this.$refs.loginFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('login', this.loginForm)
         console.log(res)
+        if (res.meta.status !== 200) return this.$message.error('登入失败')
+        this.$message.success('登入成功')
+        window.sessionStorage.setItem('token', res.data.token)
+        this.$router.push('/home')
       })
     }
   }
