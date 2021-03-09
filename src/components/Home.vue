@@ -1,24 +1,20 @@
 <template>
   <div>
-      <el-button type="info" @click="logout">
-          退出
-      </el-button>
+    <el-button type="info" @click="logout"> 退出 </el-button>
   </div>
 </template>
 
 <script>
-export default { 
-    methods: {
-        logout () {
-            // 清理token
-            window.sessionStorage.clear()
-            // 跳转到登录界面
-            this.$router.push('/login')
-        }
+export default {
+  methods: {
+    logout() {
+      // 清理token
+      window.sessionStorage.clear()
+      // 跳转到登录界面
+      this.$router.push('/login')
     }
+  }
 }
 </script>
 
-<style lang='less' scoped>
-
-</style>
+<style lang="less" scoped></style>
