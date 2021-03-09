@@ -11,3 +11,13 @@
 ### 登出功能
 
 核心语句：释放token并且路由跳转到login界面
+
+
+
+### 主页面布局
+
+display：flex
+
+弹性布局详解https://blog.csdn.net/iefreer/article/details/50775887
+
+margin padding https://www.cnblogs.com/dongh/p/9584962.html
