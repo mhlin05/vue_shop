@@ -23,6 +23,7 @@
             :collapse = "iscollapse"
             :collapse-transition='false'
             :router="true"
+            :default-active="activePath"
           >
             <!-- 一级菜单 -->
             <el-submenu
@@ -32,7 +33,6 @@
             >
               <template slot="title">
                 <i :class='iconsObj[item.id]'></i>
-                <!-- {{ iconsObj[item.id] }} -->
                 <span>{{ item.authName }}</span>
               </template>
               <!-- 二级菜单 -->
@@ -40,6 +40,7 @@
                 :index=" '/' + subItem.path "
                 v-for="subItem in item.children"
                 :key="subItem.id"
+                @click="saveNavState('/' + subItem.path)"
               >
                 <template slot="title">
                   <i class="el-icon-menu"></i>
@@ -73,11 +74,14 @@ export default {
         145: 'iconfont icon-baobiao'
       },
       iscollapse: false,
-      sideWidth: '200px'
+      sideWidth: '200px',
+      // 被激活的侧边栏地址
+      activePath: ''
     }
   },
   created() {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     // 切换菜单的折叠和展开
@@ -101,6 +105,11 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
       console.log(res)
+    },
+    // 保存侧边栏的激活状态
+    saveNavState(activePath) {
+      window.sessionStorage.setItem('avtivePath', activePath)
+      this.activePath = activePath
     }
   }
 }
