@@ -85,3 +85,11 @@ var checkEmail = (rule, value, cb) => {
   }
 
 cb 回调函数的理解是不是就是 空函数或者new error的函数？？？？
+
+
+
+### 权限列表区域
+
+
+
+使table内容居中 https://blog.csdn.net/weixin_44524835/article/details/108581115

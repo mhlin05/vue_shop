@@ -45,7 +45,6 @@
               @change="stateChange(scope.row)"
             >
             </el-switch>
-            <span>{{ scope.row }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180px">
