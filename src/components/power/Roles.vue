@@ -17,40 +17,58 @@
               <el-row
                 v-for="(item, index) in scope.row.children"
                 :key="item.id"
-                :class="['line_bottom', index === 0 ? 'line_top' : '']"
+                :class="[
+                  'line_bottom',
+                  index === 0 ? 'line_top' : '',
+                  'vcenter'
+                ]"
               >
                 <!-- 一级权限 -->
                 <el-col :span="5">
-                  <el-tag>{{ item.authName }}</el-tag>
+                  <el-tag
+                    :closable="true"
+                    @close="removeRightById(scope.row, item.id)"
+                    >{{ item.authName }}</el-tag
+                  >
                   <i class="el-icon-caret-right"></i>
                 </el-col>
-                <!-- 二级权限 -->
+                <!-- 二级和三级权限 -->
                 <el-col :span="19">
                   <el-row
                     v-for="(item2, index2) in item.children"
                     :key="item2.id"
+                    :class="[index2 === 0 ? '' : 'line_top', 'vcenter']"
+                    :gutter="0"
                   >
-                    <el-col
-                      ><el-tag type="success">
+                    <el-col :span="6"
+                      ><el-tag
+                        type="success"
+                        :closable="true"
+                        @close="removeRightById(scope.row, item2.id)"
+                      >
                         {{ item2.authName }}
                         <i class="el-icon-caret-right"></i> </el-tag
                     ></el-col>
-                    <el-col></el-col>
+                    <el-col :span="13">
+                      <el-tag
+                        type="warning"
+                        v-for="item3 in item2.children"
+                        :key="item3.id"
+                        :closable="true"
+                        @close="removeRightById(scope.row, item3.id)"
+                      >
+                        {{ item3.authName }}
+                        <i class="el-icon-caret-right"></i>
+                      </el-tag>
+                    </el-col>
                   </el-row>
-
-                  <!-- <el-tag
-                    type="warning"
-                    v-for="(item3, index3) in item.children"
-                    :key="item3.id"
-                  >
-                    {{ item3.authName }}
-                  </el-tag> -->
                 </el-col>
               </el-row>
-              <pre>
+              <!-- <pre>
                       {{ scope.row }}
                   </pre
-              >
+              > -->
+              <!-- {{ scope.row }} -->
             </template>
           </el-table-column>
           <!-- 索引列 -->
@@ -61,7 +79,10 @@
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-edit">编辑</el-button>
               <el-button type="danger" icon="el-icon-delete">删除</el-button>
-              <el-button type="warning" icon="el-icon-setting"
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                @click="showSetRightDialog"
                 >分配权限</el-button
               >
             </template>
@@ -69,6 +90,15 @@
         </el-table>
       </div>
     </el-card>
+    <el-dialog title="分配权限" :visible.sync="rightDialogVisible">
+      <el-tree :data="rightsData" :props="defaultProps"></el-tree>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="rightDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="rightDialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,6 +106,7 @@
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb.vue'
 export default {
   created() {
+    // 获取权限和角色数据
     this.getRolesData()
   },
   components: {
@@ -83,11 +114,22 @@ export default {
   },
   data() {
     return {
+      // 面包屑数据
       nameList: ['权限管理', '角色列表'],
-      rolesData: []
+      // 角色数据
+      rolesData: [],
+      // 权限数据
+      rightsData: [],
+      // 分配权限对话框
+      rightDialogVisible: false,
+      defaultProps: {
+        children: 'children',
+        label: 'authName'
+      }
     }
   },
   methods: {
+    // 获取角色数据
     async getRolesData() {
       const { data: res } = await this.$http.get('roles')
       if (res.meta.status !== 200) {
@@ -95,6 +137,47 @@ export default {
       }
       this.rolesData = res.data
       //   console.log(res.data)
+    },
+    // 根据id删除对应权限
+    async removeRightById(role, rightId) {
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该权限, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('取消了删除')
+      } else {
+        console.log('确认了删除')
+        const { data: res } = await this.$http.delete(
+          `roles/${role.id}/rights/${rightId}`
+        )
+        if (res.meta.status !== 200) {
+          return this.$message.error('取消权限失败')
+        }
+        this.$message.success('取消权限成功')
+        // this.getRolesData()
+        role.children = res.data
+      }
+    },
+    // 展示分配权限的对话框
+    showSetRightDialog() {
+      this.getRightsTree()
+      this.rightDialogVisible = true
+    },
+    // 获取所有权限列表 树状
+    async getRightsTree() {
+      const { data: res } = await this.$http.get('rights/tree')
+      // console.log(res)
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取权限数据失败')
+      }
+      this.rightsData = res.data
+      // console.log(this.rightsData)
     }
   }
 }
@@ -114,5 +197,9 @@ export default {
 }
 .line_bottom {
   border-bottom: 1px solid #eee;
+}
+.vcenter {
+  display: flex;
+  align-items: center;
 }
 </style>
