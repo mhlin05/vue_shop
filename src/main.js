@@ -8,6 +8,7 @@ import './assets/css/global.css'
 // 导入图标样式
 import './assets/fonts/iconfont.css'
 import Axios from 'axios'
+import TreeTable from 'vue-table-with-tree-grid'
 // import NProgress from 'nprogress'
 // import 'nprogress/nprogress.css'
 Vue.config.productionTip = false
@@ -33,6 +34,7 @@ Axios.interceptors.request.use(config => {
 //   NProgress.done()
 //   return config
 // })
+Vue.component('tree-table', TreeTable)
 new Vue({
   router,
   render: h => h(App)
