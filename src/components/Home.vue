@@ -82,6 +82,7 @@ export default {
   created() {
     this.getMenuList()
     this.activePath = window.sessionStorage.getItem('activePath')
+    console.log(this.activePath)
   },
   methods: {
     // 切换菜单的折叠和展开
@@ -108,7 +109,7 @@ export default {
     },
     // 保存侧边栏的激活状态
     saveNavState(activePath) {
-      window.sessionStorage.setItem('avtivePath', activePath)
+      window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
     }
   }
