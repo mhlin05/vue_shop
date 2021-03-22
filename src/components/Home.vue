@@ -12,7 +12,7 @@
       <!-- 页面主体 -->
       <el-container>
         <!-- 侧边栏 -->
-        <el-aside :width="sideWidth">
+        <el-aside :width="sideWidth" class="asideStyle">
           <div class="toggle-button" @click="change">|||</div>
           <!-- 侧边栏菜单 -->
           <el-menu
@@ -138,6 +138,7 @@ export default {
 .el-aside {
   background-color: #333744;
   align-items: center;
+  text-align: center;
   .el-menu {
     border-right: 0;
     // .el-submenu {
