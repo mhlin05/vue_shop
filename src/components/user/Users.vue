@@ -1,11 +1,12 @@
 <template>
   <div>
+    <!-- <my-table
+      :tableInfo="tableInfo"
+      :tableData="userList"
+      @switchStateChanged="stateChange"
+    ></my-table> -->
     <!-- 面包屑导航区域 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <breadcrumb :names="UserBreadcrumbData"></breadcrumb>
     <!-- 卡片视图区域 -->
     <el-card>
       <!-- 搜索区域 -->
@@ -26,7 +27,7 @@
         </el-col>
         <!-- 添加用户按钮 -->
         <el-col :span="4">
-          <el-button type="primary" @click="dialogVisible = true"
+          <el-button type="primary" @click="addUserDialogVisible = true"
             >添加用户</el-button
           >
         </el-col>
@@ -38,7 +39,7 @@
         <el-table-column label="邮箱" prop="email"></el-table-column>
         <el-table-column label="电话" prop="mobile"></el-table-column>
         <el-table-column label="角色" prop="role_name"></el-table-column>
-        <el-table-column label="状态" prop="mg_state">
+        <el-table-column label="状态">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.mg_state"
@@ -95,8 +96,8 @@
     <!-- 添加用户的对话框 -->
     <el-dialog
       title="添加用户"
-      :visible.sync="dialogVisible"
-      width="50%"
+      :visible.sync="addUserDialogVisible"
+      width="30%"
       @close="closeAddDialog"
     >
       <el-form
@@ -109,7 +110,7 @@
           <el-input v-model="addFormData.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="addFormData.password"></el-input>
+          <el-input v-model="addFormData.password" show-password></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="addFormData.email"></el-input>
@@ -120,7 +121,7 @@
       </el-form>
       <!-- 对话框底部区域 -->
       <span slot="footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="addUserDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addUser">确 定</el-button>
       </span>
     </el-dialog>
@@ -129,7 +130,7 @@
       title="修改用户信息"
       @close="modifyDialogClosed"
       :visible.sync="modifyDialog"
-      width="50%"
+      width="30%"
     >
       <el-form
         ref="modifyFormRef"
@@ -157,8 +158,9 @@
       title="分配角色"
       :visible.sync="roleDialogVisible"
       @close="closeRoleDialog"
+      width="30%"
     >
-      <el-form ref="roleFormRef" :model="userInfo" label-width="80px">
+      <el-form ref="roleFormRef" :model="userInfo" label-width="100px">
         <el-form-item label="当前用户">
           <el-input disabled v-model="userInfo.username"></el-input>
         </el-form-item>
@@ -190,7 +192,10 @@
 </template>
 
 <script>
+import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
+// import MyTable from '../MyTable.vue'
 export default {
+  components: { Breadcrumb },
   data() {
     // 验证邮箱的规则
     var checkEmail = (rule, value, cb) => {
@@ -221,7 +226,7 @@ export default {
       userList: [],
       total: 0,
       // 用户添加对话框的显示与隐藏
-      dialogVisible: false,
+      addUserDialogVisible: false,
       // 修改用户对话框的显示与隐藏
       modifyDialog: false,
       // 分配角色对话框的显示与隐藏
@@ -269,7 +274,20 @@ export default {
       userInfo: {},
       // 角色列表
       rolesList: [],
-      selectedRoleId: ''
+      selectedRoleId: '',
+      // 面包屑数据
+      UserBreadcrumbData: ['用户管理', '用户列表'],
+      // table数据
+      tableInfo: {
+        label_prop: [
+          { label: '姓名', prop: 'username' },
+          { label: '邮箱', prop: 'email' },
+          { label: '电话', prop: 'mobile' },
+          { label: '角色', prop: 'role_name' }
+        ],
+        state: true,
+        operate: true
+      }
     }
   },
   created() {
@@ -281,7 +299,7 @@ export default {
       const { data: res } = await this.$http.get('users', {
         params: this.queryInfo
       })
-      console.log(res)
+      // console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('获取用户列表失败')
       }
@@ -306,10 +324,13 @@ export default {
       const { data: res } = await this.$http.put(
         `users/${row.id}/state/${row.mg_state}`
       )
+
       if (res.meta.status !== 200) {
+        // 更新失败 重置状态值
         row.mg_state = !row.mg_state
         return this.$message.error('更新用户状态失败')
       }
+      console.log(row.mg_state)
       this.$message.success('更新用户状态成功')
     },
     // 确认添加用户
@@ -328,7 +349,8 @@ export default {
           // 重新获取用户列表
           this.getUserList()
         } else {
-          return this.$message.error('表单验证不通过')
+          // console.log(obj)
+          return this.$message.error(obj + '表单验证不通过')
         }
       })
 

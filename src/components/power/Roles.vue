@@ -6,8 +6,35 @@
     <el-card>
       <!-- 添加角色区域 -->
       <div class="btnStyle">
-        <el-button type="primary">添加角色</el-button>
+        <el-button type="primary" @click="addRoleDialogVisible = true"
+          >添加角色</el-button
+        >
       </div>
+      <!-- 添加角色的对话框 -->
+      <el-dialog
+        title="添加角色"
+        :visible.sync="addRoleDialogVisible"
+        width="30%"
+        @close="addRoleDialogClosed"
+      >
+        <el-form
+          ref="addRoleFormRef"
+          :model="addRoleFormData"
+          label-width="100px"
+          :rules="addRoleFormRules"
+        >
+          <el-form-item label="角色名称" prop="roleName">
+            <el-input v-model="addRoleFormData.roleName"></el-input>
+          </el-form-item>
+          <el-form-item label="角色描述">
+            <el-input v-model="addRoleFormData.roleDesc"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="addRoleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addRole">确 定</el-button>
+        </span>
+      </el-dialog>
       <!-- 角色列表区域 -->
       <div>
         <el-table :data="rolesData" stripe style="width: 100%" border>
@@ -77,8 +104,18 @@
           <el-table-column prop="roleDesc" label="角色描述"> </el-table-column>
           <el-table-column label="操作" width="400px">
             <template slot-scope="scope">
-              <el-button type="primary" icon="el-icon-edit">编辑</el-button>
-              <el-button type="danger" icon="el-icon-delete">删除</el-button>
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                @click="showEditDialog(scope.row)"
+                >编辑</el-button
+              >
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                @click="deleteRole(scope.row)"
+                >删除</el-button
+              >
               <el-button
                 type="warning"
                 icon="el-icon-setting"
@@ -91,6 +128,30 @@
         </el-table>
       </div>
     </el-card>
+    <!-- 编辑角色对话框 -->
+    <el-dialog
+      width="30%"
+      title="编辑角色"
+      :visible.sync="editRoleDialogVisible"
+    >
+      <el-form
+        :model="editRoleData"
+        ref="editRoleFormRef"
+        :rules="addRoleFormRules"
+        label-width="100px"
+      >
+        <el-form-item label="角色名" prop="roleName">
+          <el-input v-model="editRoleData.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="editRoleData.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editRoleInfo">确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- 分配权限dialog -->
     <el-dialog
       title="分配权限"
@@ -141,7 +202,29 @@ export default {
       // 默认勾选的key数组
       defKeys: [],
       // 当前即将分配权限的id
-      roleId: ''
+      roleId: '',
+      // 添加角色的表单数据
+      addRoleFormData: {
+        // 角色名
+        roleName: '',
+        // 角色描述
+        roleDesc: ''
+      },
+      // 添加角色对话框
+      addRoleDialogVisible: false,
+      // 添加角色验证规则
+      addRoleFormRules: {
+        roleName: [{ required: true, message: '请输入角色名', trigger: 'blur' }]
+      },
+      // 编辑对话框visible
+      editRoleDialogVisible: false,
+      editRoleData: {
+        id: '',
+        // 角色名
+        roleName: '',
+        // 角色描述
+        roleDesc: ''
+      }
     }
   },
   methods: {
@@ -227,6 +310,85 @@ export default {
       // this.getRightsTree()
       this.rightDialogVisible = false
       this.$message.success('分配权限成功')
+    },
+    // 添加角色
+    async addRole() {
+      // 表单验证'
+      this.$refs.addRoleFormRef.validate(async valid => {
+        if (valid === true) {
+          const { data: res } = await this.$http.post(
+            'roles',
+            this.addRoleFormData
+          )
+          if (res.meta.status !== 201) {
+            return this.$message.error('创建角色失败')
+          }
+          this.getRolesData()
+          this.addRoleDialogVisible = false
+        } else {
+          return this.$message.error('表单验证失败')
+        }
+      })
+    },
+    // 添加角色对话框关闭
+    addRoleDialogClosed() {
+      this.addRoleFormData.roleName = ''
+      this.addRoleFormData.roleDesc = ''
+      this.$refs.addRoleFormRef.resetFields()
+    },
+    // 显示编辑角色对话框
+    showEditDialog(row) {
+      console.log(row)
+      this.editRoleData.id = row.id
+      this.editRoleData.roleName = row.roleName
+      this.editRoleData.roleDesc = row.roleDesc
+      this.editRoleDialogVisible = true
+    },
+    // 提交角色修改信息
+    editRoleInfo() {
+      this.$refs.editRoleFormRef.validate(async valid => {
+        if (!valid) {
+          return this.$message.error('表单验证不通过')
+        } else {
+          const { data: res } = await this.$http.put(
+            `roles/${this.editRoleData.id}`,
+            this.editRoleData
+          )
+          if (res.meta.status !== 200) {
+            return this.$message.error('修改角色信息失败')
+          } else {
+            this.getRolesData()
+            this.editRoleDialogVisible = false
+            this.$message.success('修改角色信息成功')
+          }
+        }
+      })
+    },
+    // 删除角色
+    deleteRole(row) {
+      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const { data: res } = await this.$http.delete(`roles/${row.id}`)
+          if (res.meta.status !== 200) {
+            return this.$message.error('删除角色失败')
+          } else {
+            this.getRolesData()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 }
