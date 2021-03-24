@@ -8,6 +8,8 @@ import Rights from '@/components/power/Rights.vue'
 import Roles from '@/components/power/Roles.vue'
 import Cate from '@/components/goods/Cate.vue'
 import Params from '@/components/goods/Params.vue'
+import List from '@/components/goods/List.vue'
+import Add from '@/components/goods/Add.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -23,7 +25,14 @@ const routes = [
       { path: '/rights', component: Rights },
       { path: '/roles', component: Roles },
       { path: '/categories', component: Cate },
-      { path: '/params', component: Params }
+      { path: '/params', component: Params },
+      // 这么写的问题是 这样只能把路由出口设置在List.vue里面 不能完全显示
+      {
+        path: '/goods',
+        component: List
+        // children: [{ path: 'add', component: Add }]
+      },
+      { path: '/goods/add', component: Add }
     ]
   }
 ]
