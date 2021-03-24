@@ -57,6 +57,7 @@
                   v-for="(tag, index) in scope.row.attr_vals"
                   closable
                   :disable-transitions="false"
+                  @close="handleClose(scope.row, index)"
                   >{{ tag }}
                 </el-tag>
                 <el-input
@@ -127,6 +128,7 @@
                   v-for="(tag, index) in scope.row.attr_vals"
                   closable
                   :disable-transitions="false"
+                  @close="handleClose(scope.row, index)"
                 >
                   {{ tag }}
                 </el-tag>
@@ -283,6 +285,7 @@ export default {
     this.getAllGoodsCate()
   },
   methods: {
+    // 解决展开栏 展开多栏问题
     expandSelect(row, expandedRows) {
       if (expandedRows.length) {
         this.expands = []
@@ -295,32 +298,30 @@ export default {
     },
     //   获取参数列表
     async getParamsList() {
-      const { data: res } = await this.$http.get(
-        `categories/${this.selectedId}/attributes`,
-        {
-          params: {
-            sel: this.activeName
-          }
-        }
-      )
-      if (res.meta.status !== 200) {
-        this.$message.error('获取参数列表失败')
+      if (this.selectedKeys.length !== 3) {
+        this.manyTableData = []
+        this.onlyTableData = []
+        return this.$message.error('请选择三级分类')
       } else {
-        // const tempdata = {}
-        console.log(res)
-        res.data.forEach(item => {
-          item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : []
-          // console.log(tempdata.attr_vals)
-        })
-
-        if (this.activeName === 'many') {
-          this.manyTableData = res.data
-          // this.manyTableData.attr_vals = tempdata.attr_vals
-          // console.log(this.manyTableData)
+        const { data: res } = await this.$http.get(
+          `categories/${this.selectedId}/attributes`,
+          {
+            params: {
+              sel: this.activeName
+            }
+          }
+        )
+        if (res.meta.status !== 200) {
+          this.$message.error('获取参数列表失败')
         } else {
-          this.onlyTableData = res.data
-          // this.onlyTableData.attr_vals = tempdata.attr_vals
-          // console.log(this.onlyTableData)
+          res.data.forEach(item => {
+            item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : []
+          })
+          if (this.activeName === 'many') {
+            this.manyTableData = res.data
+          } else {
+            this.onlyTableData = res.data
+          }
         }
       }
     },
@@ -473,6 +474,25 @@ export default {
       }
       this.inputVisible = false
       this.inputValue = ''
+    },
+    // 标签关闭触发
+    async handleClose(row, index) {
+      // 在attr_vals中删除 tag
+      row.attr_vals.splice(index, 1)
+      const { data: res } = await this.$http.put(
+        `categories/${this.selectedId}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: this.activeName,
+          attr_vals: row.attr_vals.join(',')
+        }
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      } else {
+        this.$message.success('更新成功')
+        this.getParamsList()
+      }
     }
   },
   computed: {
