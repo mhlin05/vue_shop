@@ -42,6 +42,16 @@ Axios.interceptors.request.use(config => {
 //   NProgress.done()
 //   return config
 // })
+Vue.filter('datefilter', function(time) {
+  const mydate = new Date(time)
+  const y = mydate.getFullYear()
+  const m = mydate.getMonth() + 1
+  const d = mydate.getDate()
+  const hour = mydate.getHours()
+  const min = mydate.getMinutes()
+  const second = mydate.getSeconds()
+  return `${y}-${m}-${d} ${hour}:${min}:${second}`
+})
 Vue.component('tree-table', TreeTable)
 new Vue({
   router,
