@@ -9,6 +9,14 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 import Axios from 'axios'
 import TreeTable from 'vue-table-with-tree-grid'
+// 导入富文本编辑器
+import VueQuillEditor from 'vue-quill-editor'
+// 导入富文本编辑器及样式
+import 'quill/dist/quill.core.css' // import styles
+import 'quill/dist/quill.snow.css' // for snow theme
+import 'quill/dist/quill.bubble.css' // for bubble theme
+
+Vue.use(VueQuillEditor /* { default global options } */)
 // import NProgress from 'nprogress'
 // import 'nprogress/nprogress.css'
 Vue.config.productionTip = false
