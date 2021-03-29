@@ -41,11 +41,19 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" circle></el-button>
+            <!-- 修改地址 -->
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              circle
+              @click="addressDialogVisible = true"
+            ></el-button>
+            <!-- 展示物流按钮 -->
             <el-button
               type="success"
               icon="el-icon-location-outline"
               circle
+              @click="showLogistics()"
             ></el-button>
           </template>
         </el-table-column>
@@ -62,10 +70,58 @@
       >
       </el-pagination>
     </el-card>
+    <!-- 修改地址对话框 -->
+    <el-dialog
+      title="修改地址"
+      :visible.sync="addressDialogVisible"
+      width="50%"
+    >
+      <el-form
+        :model="addressFormData"
+        :rules="addressRules"
+        ref="addressRuleForm"
+        class="demo-ruleForm"
+        label-width="100px"
+      >
+        <el-form-item label="省市区/县" prop="address1">
+          <el-cascader
+            :options="cityData"
+            v-model="addressFormData.address1"
+          ></el-cascader>
+          <!-- <el-input v-model="addressFormData.address1"></el-input> -->
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address2">
+          <el-input v-model="addressFormData.address2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addressDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addressDialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+    <!-- 展示物流对话框 -->
+    <el-dialog
+      title="物流信息"
+      :visible.sync="logisticsDialogVisible"
+      wiDth="50%"
+    >
+      <el-timeline :reverse="true">
+        <el-timeline-item
+          v-for="(item, index) in logisticsData"
+          :key="index"
+          :timestamp="item.timestamp"
+        >
+          {{ item.content }}
+        </el-timeline-item>
+      </el-timeline>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import cityData from './citydata'
 import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
 export default {
   components: { Breadcrumb },
@@ -90,6 +146,11 @@ export default {
       console.log(res)
       this.orderTableData = res.data.goods
       this.total = res.data.total
+    },
+    async showLogistics() {
+      // 显示对话框
+      this.logisticsDialogVisible = true
+      // 获取物流数据
     }
   },
   data() {
@@ -104,7 +165,40 @@ export default {
       },
       total: 0,
       //   订单数据
-      orderTableData: []
+      orderTableData: [],
+      // 修改地址 对话框
+      addressDialogVisible: false,
+      addressFormData: {
+        address1: [],
+        address2: ''
+      },
+      // 获取省市区/县数据
+      cityData,
+      addressRules: {
+        address1: [
+          { required: true, message: '请输入省市区/县', trigger: 'change' }
+        ],
+        address2: [
+          { required: true, message: '请输入详细地址', trigger: 'blur' }
+        ]
+      },
+      // 显示 展示物流对话框
+      logisticsDialogVisible: false,
+      // 物流数据
+      logisticsData: [
+        {
+          content: '揽收',
+          timestamp: '2018-04-15'
+        },
+        {
+          content: '运输中',
+          timestamp: '2018-04-13'
+        },
+        {
+          content: '签收',
+          timestamp: '2018-04-11'
+        }
+      ]
     }
   }
 }
@@ -114,5 +208,8 @@ export default {
 .el-pagination {
   display: flex;
   justify-content: center;
+}
+.el-cascader {
+  width: 100%;
 }
 </style>
