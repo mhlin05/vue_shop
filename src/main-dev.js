@@ -27,12 +27,15 @@ Axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 // 需要授权的 API ，必须在请求头中使用 `Authorization` 字段提供 `token` 令牌
 // 这个拦截器会在你发送请求之前运行
 // 我的这个请求拦截器的功能是为我每一次请求去判断是否有token，如果token存在则在请求头加上这个token。后台会判断我这个token是否过期。
+
 Axios.interceptors.request.use(config => {
-  // console.log(config)
   // 展示进度条
+
   NProgress.start()
+  // config 是当前请求的相关配置信息对象，可以修改
   config.headers.Authorization = window.sessionStorage.getItem('token')
   // 在最后必须return config
+  // 当这里 return config之后，才会真正发送请求
   return config
 })
 

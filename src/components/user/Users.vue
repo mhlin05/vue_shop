@@ -460,4 +460,9 @@ export default {
 }
 </script>
 
-<style lang="less" scpoed></style>
+<style lang="less" scpoed>
+.el-pagination {
+  display: flex;
+  justify-content: center;
+}
+</style>

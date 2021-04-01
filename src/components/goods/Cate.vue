@@ -214,6 +214,7 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取商品分类失败')
       }
+      console.log(res.data)
       this.goodCategoriesData = res.data.result
       // console.log(this.goodCategoriesData)
       //   总数据条数赋值

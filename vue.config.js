@@ -1,4 +1,5 @@
 module.exports = {
+  // 通过 chainWebpack 自定义打包入口
   chainWebpack: config => {
     //  发布模式
     config.when(process.env.NODE_ENV === 'production', config => {
