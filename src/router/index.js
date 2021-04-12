@@ -9,13 +9,9 @@ const Cate = () => import('@/components/goods/Cate.vue')
 const Params = () => import('@/components/goods/Params.vue')
 const List = () => import('@/components/goods/List.vue')
 const Add = () => import('@/components/goods/Add.vue')
-// import Login from '@/components/Login.vue'
 
-// import Users from '@/components/user/Users.vue'
 const Users = () => import('@/components/user/Users.vue')
 
-// import Home from '@/components/Home.vue'
-// import Welcome from '@/components/Welcome.vue'
 const Home = () => import('@/components/Home.vue')
 const Welcome = () => import('@/components/Welcome.vue')
 const Login = () => import('@/components/Login.vue')

@@ -65,12 +65,13 @@ export default {
     login() {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.post('login', this.loginForm)
-        console.log(res)
-        if (res.meta.status !== 200) return this.$message.error('登入失败')
-        this.$message.success('登入成功')
-        window.sessionStorage.setItem('token', res.data.token)
-        this.$router.push('/home')
+        this.$store.dispatch('my/login', this.loginForm)
+        // const { data: res } = await this.$http.post('login', this.loginForm)
+        // console.log(res)
+        // if (res.meta.status !== 200) return this.$message.error('登入失败')
+        // this.$message.success('登入成功')
+        // window.sessionStorage.setItem('token', res.data.token)
+        // this.$router.push('/home')
       })
     }
   }

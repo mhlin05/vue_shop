@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from './store'
 import 'default-passive-events'
 import App from './App.vue'
 import router from './router'
@@ -18,7 +19,6 @@ import 'quill/dist/quill.bubble.css' // for bubble theme
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 Vue.use(VueQuillEditor /* { default global options } */)
-
 Vue.config.productionTip = false
 // axios配置
 Vue.prototype.$http = Axios
@@ -58,5 +58,6 @@ Vue.filter('datefilter', function(time) {
 Vue.component('tree-table', TreeTable)
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
