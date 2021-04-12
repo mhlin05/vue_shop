@@ -5,7 +5,8 @@ export default {
   namespaced: true,
   // 属性
   state: {
-    myToken: window.sessionStorage.getItem('token')
+    myToken: window.sessionStorage.getItem('token'),
+    num: 1
   },
   getters: {
     price: function() {
@@ -17,6 +18,9 @@ export default {
     setToken(state, payload) {
       state.myToken = payload
       window.sessionStorage.setItem('token', payload)
+    },
+    add(state) {
+      state.num += 1
     }
   },
   // 异步方法
@@ -39,6 +43,9 @@ export default {
         router.push('/home')
       }
     },
-    getToken(context, payload) {}
+    getToken(context, payload) {},
+    go_add(context, payload) {
+      context.commit('add')
+    }
   }
 }

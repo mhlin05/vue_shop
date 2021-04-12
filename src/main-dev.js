@@ -22,7 +22,7 @@ Vue.use(VueQuillEditor /* { default global options } */)
 Vue.config.productionTip = false
 // axios配置
 Vue.prototype.$http = Axios
-Axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+Axios.defaults.baseURL = 'http://10.12.44.155:8888/api/private/v1/'
 // 请求拦截器
 // 需要授权的 API ，必须在请求头中使用 `Authorization` 字段提供 `token` 令牌
 // 这个拦截器会在你发送请求之前运行

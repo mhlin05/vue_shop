@@ -42,12 +42,10 @@ export default new Vuex.Store({
             context.commit('setToken', res.data.token)
             router.push('/home')
           }
-        },
-        getToken(context, payload) {}
+        }
       }
     }
   },
-
   // 计算属性
   getters: {}
 })
