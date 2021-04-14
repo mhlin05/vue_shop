@@ -1,6 +1,6 @@
-import Axios from 'axios'
 import { Message } from 'element-ui'
 import router from '@/router'
+import { login } from '@/api/login.js'
 export default {
   namespaced: true,
   // 属性
@@ -27,8 +27,10 @@ export default {
   actions: {
     // 登录
     async login(context, payload) {
-      const { data: res } = await Axios.post('login', payload)
-      console.log(res)
+      // const { data: res } = await Axios.post('login', payload)
+      console.log('store/my/login')
+
+      const { data: res } = await login(payload.username, payload.password)
       if (res.meta.status !== 200) {
         Message({
           message: '登录失败',

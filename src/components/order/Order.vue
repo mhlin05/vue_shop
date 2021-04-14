@@ -121,6 +121,7 @@
 </template>
 
 <script>
+import Request from '@/utils/request.js'
 import cityData from './citydata'
 import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
 export default {
@@ -140,9 +141,12 @@ export default {
       this.getOrderList()
     },
     async getOrderList() {
-      const { data: res } = await this.$http.get('orders', {
+      const { data: res } = await Request({
+        url: 'orders',
+        method: 'get',
         params: this.queryInfo
       })
+
       console.log(res)
       this.orderTableData = res.data.goods
       this.total = res.data.total

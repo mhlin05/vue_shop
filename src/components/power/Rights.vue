@@ -32,6 +32,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb.vue'
 import RightsTag from './RightsTag.vue'
+import { getRightsRequest } from '@/api/power.js'
 export default {
   components: { RightsTag, Breadcrumb },
   data() {
@@ -47,7 +48,7 @@ export default {
   methods: {
     // 获取权限列表
     async getRightsList() {
-      const { data: res } = await this.$http.get('rights/list')
+      const { data: res } = await getRightsRequest()
       // console.log(res)
       this.rightsData = res.data
     },

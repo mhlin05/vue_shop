@@ -192,6 +192,14 @@
 </template>
 
 <script>
+import {
+  getUserInfo,
+  changeUserState,
+  addUserRequest,
+  modifyUserInfoRequest,
+  deleteUserRequest
+} from '@/api/user.js'
+import { getRolesDataRequest, allotRolesRequest } from '@/api/role.js'
 import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
 // import MyTable from '../MyTable.vue'
 export default {
@@ -296,10 +304,8 @@ export default {
   methods: {
     // 获取用户列表
     async getUserList() {
-      const { data: res } = await this.$http.get('users', {
-        params: this.queryInfo
-      })
-      // console.log(res)
+      const { data: res } = await getUserInfo(this.queryInfo)
+      console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('获取用户列表失败')
       }
@@ -321,10 +327,7 @@ export default {
     },
     // 用户状态改变
     async stateChange(row) {
-      const { data: res } = await this.$http.put(
-        `users/${row.id}/state/${row.mg_state}`
-      )
-
+      const { data: res } = await changeUserState(row.id, row.mg_state)
       if (res.meta.status !== 200) {
         // 更新失败 重置状态值
         row.mg_state = !row.mg_state
@@ -338,16 +341,17 @@ export default {
       this.$refs.addFormRef.validate(async (validateRes, obj) => {
         // 验证通过开始发起请求 添加用户
         if (validateRes === true) {
-          const { data: res } = await this.$http.post('users', this.addFormData)
+          const { data: res } = await addUserRequest(this.addFormData)
           if (res.meta.status !== 201) {
             console.log(res.meta)
             return this.$message.error('添加用户失败')
+          } else {
+            this.$message.success('添加用户成功')
+            // 添加成功 隐藏对话框
+            this.addUserDialogVisible = false
+            // 重新获取用户列表
+            this.getUserList()
           }
-          this.$message.success('添加用户成功')
-          // 添加成功 隐藏对话框
-          this.dialogVisible = false
-          // 重新获取用户列表
-          this.getUserList()
         } else {
           // console.log(obj)
           return this.$message.error(obj + '表单验证不通过')
@@ -376,10 +380,11 @@ export default {
     modifyUserInfo() {
       this.$refs.modifyFormRef.validate(async valid => {
         if (valid === true) {
-          const { data: res } = await this.$http.put(
-            `users/${this.modifyFormData.id}`,
-            this.modifyFormData
-          )
+          // const { data: res } = await this.$http.put(
+          //   `users/${this.modifyFormData.id}`,
+          //   this.modifyFormData
+          // )
+          const { data: res } = await modifyUserInfoRequest(this.modifyFormData)
           if (res.meta.status !== 200) {
             return this.$message.error('修改用户信息失败')
           }
@@ -399,7 +404,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const { data: res } = await this.$http.delete(`users/${myid}`)
+          const { data: res } = await deleteUserRequest(myid)
           if (res.meta.status === 200) {
             this.$message({
               type: 'success',
@@ -425,7 +430,7 @@ export default {
       // 将这一行数据存入data
       this.userInfo = row
       // 获取角色列表
-      const { data: res } = await this.$http.get('roles')
+      const { data: res } = await getRolesDataRequest()
       if (res.meta.status !== 200) {
         return this.$message.error('获取角色列表失败')
       }
@@ -438,11 +443,15 @@ export default {
       if (!this.selectedRoleId) {
         return this.$message.error('请选择要分配的角色')
       }
-      const { data: res } = await this.$http.put(
-        `users/${this.userInfo.id}/role`,
-        {
-          rid: this.selectedRoleId
-        }
+      // const { data: res } = await this.$http.put(
+      //   `users/${this.userInfo.id}/role`,
+      //   {
+      //     rid: this.selectedRoleId
+      //   }
+      // )
+      const { data: res } = await allotRolesRequest(
+        this.userInfo,
+        this.selectedRoleId
       )
       if (res.meta.status !== 200) {
         return this.$message.error('更新角色失败')

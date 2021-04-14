@@ -4,7 +4,7 @@
 
 <script>
 import * as echarts from 'echarts'
-
+import { getDataRequest } from '@/api/report.js'
 export default {
   data() {
     return {
@@ -44,7 +44,7 @@ export default {
   // mounted会比created先执行
   async mounted() {
     // 获取数据
-    const { data: res } = await this.$http.get('reports/type/1')
+    const { data: res } = await getDataRequest()
     // 准备配置项
     this.options = Object.assign(this.options, res.data)
     console.log(this.options)

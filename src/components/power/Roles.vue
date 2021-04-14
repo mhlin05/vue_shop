@@ -177,6 +177,17 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb.vue'
+import {
+  getRolesDataRequest,
+  addRoleRequest,
+  modifyRoleRequest,
+  deleteRoleRequest
+} from '@/api/role.js'
+import {
+  deletePowerAsId,
+  getRightsTreeRequest,
+  allotRightsRequest
+} from '@/api/power.js'
 export default {
   created() {
     // 获取权限和角色数据
@@ -230,7 +241,7 @@ export default {
   methods: {
     // 获取角色数据
     async getRolesData() {
-      const { data: res } = await this.$http.get('roles')
+      const { data: res } = await getRolesDataRequest()
       if (res.meta.status !== 200) {
         return this.$message.error('获取角色列表失败')
       }
@@ -252,9 +263,8 @@ export default {
         return this.$message.info('取消了删除')
       } else {
         console.log('确认了删除')
-        const { data: res } = await this.$http.delete(
-          `roles/${role.id}/rights/${rightId}`
-        )
+        const { data: res } = await deletePowerAsId(role, rightId)
+
         if (res.meta.status !== 200) {
           return this.$message.error('取消权限失败')
         }
@@ -272,7 +282,7 @@ export default {
     },
     // 获取所有权限列表 树状
     async getRightsTree() {
-      const { data: res } = await this.$http.get('rights/tree')
+      const { data: res } = await getRightsTreeRequest()
       // console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('获取权限数据失败')
@@ -299,10 +309,7 @@ export default {
         ...this.$refs.treeRef.getHalfCheckedKeys()
       ]
       const idStr = keys.join(',')
-      const { data: res } = await this.$http.post(
-        `roles/${this.roleId}/rights`,
-        { rids: idStr }
-      )
+      const { data: res } = await allotRightsRequest(this.roleId, idStr)
       if (res.meta.status !== 200) {
         return this.$message.error('分配权限失败')
       }
@@ -316,10 +323,7 @@ export default {
       // 表单验证'
       this.$refs.addRoleFormRef.validate(async valid => {
         if (valid === true) {
-          const { data: res } = await this.$http.post(
-            'roles',
-            this.addRoleFormData
-          )
+          const { data: res } = await addRoleRequest(this.addRoleFormData)
           if (res.meta.status !== 201) {
             return this.$message.error('创建角色失败')
           }
@@ -350,10 +354,7 @@ export default {
         if (!valid) {
           return this.$message.error('表单验证不通过')
         } else {
-          const { data: res } = await this.$http.put(
-            `roles/${this.editRoleData.id}`,
-            this.editRoleData
-          )
+          const { data: res } = await modifyRoleRequest(this.editRoleData)
           if (res.meta.status !== 200) {
             return this.$message.error('修改角色信息失败')
           } else {
@@ -372,7 +373,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const { data: res } = await this.$http.delete(`roles/${row.id}`)
+          const { data: res } = await deleteRoleRequest(row.id)
           if (res.meta.status !== 200) {
             return this.$message.error('删除角色失败')
           } else {

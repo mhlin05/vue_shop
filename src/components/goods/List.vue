@@ -84,6 +84,7 @@
 
 <script>
 import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
+import { getGoodsListRequest, deleteGoodsRequest } from '@/api/goods.js'
 export default {
   components: { Breadcrumb },
   created() {
@@ -109,9 +110,7 @@ export default {
   methods: {
     //   获取商品列表
     async getGoodsList() {
-      const { data: res } = await this.$http.get('goods', {
-        params: this.queryInfo
-      })
+      const { data: res } = await getGoodsListRequest(this.queryInfo)
       console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('获取商品列表失败')
@@ -134,7 +133,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const { data: res } = await this.$http.delete(`goods/${row.goods_id}`)
+          const { data: res } = await deleteGoodsRequest(row.goods_id)
           if (res.meta.status !== 200) {
             return this.$message.error('删除失败')
           } else {

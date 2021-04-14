@@ -17,6 +17,8 @@ import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import filters from './filters'
+
 Vue.use(VueQuillEditor /* { default global options } */)
 
 Vue.config.productionTip = false
@@ -45,15 +47,8 @@ Axios.interceptors.response.use(config => {
   NProgress.done()
   return config
 })
-Vue.filter('datefilter', function(time) {
-  const mydate = new Date(time)
-  const y = mydate.getFullYear()
-  const m = mydate.getMonth() + 1
-  const d = mydate.getDate()
-  const hour = mydate.getHours()
-  const min = mydate.getMinutes()
-  const second = mydate.getSeconds()
-  return `${y}-${m}-${d} ${hour}:${min}:${second}`
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
 })
 Vue.component('tree-table', TreeTable)
 new Vue({

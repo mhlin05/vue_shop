@@ -141,6 +141,8 @@
 <script>
 import _ from 'lodash'
 import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
+import { getCateDataRequest, getCateAttributesRequest } from '@/api/category.js'
+import { addGoodsRequest } from '@/api/goods.js'
 export default {
   components: {
     Breadcrumb
@@ -232,7 +234,7 @@ export default {
     },
     //   获取分类数据
     async getAllGoodsCate() {
-      const { data: res } = await this.$http.get('categories')
+      const { data: res } = await getCateDataRequest()
       //   console.log(res.data)
       if (res.meta.status !== 200) {
         return this.$message.error('获取分类失败')
@@ -249,13 +251,9 @@ export default {
     },
     // 获取参数 并将参数值处理为数组
     async getCateList(mysel) {
-      const { data: res } = await this.$http.get(
-        `categories/${this.selectedId}/attributes`,
-        {
-          params: {
-            sel: mysel
-          }
-        }
+      const { data: res } = await getCateAttributesRequest(
+        this.selectedId,
+        mysel
       )
       if (res.meta.status !== 200) {
         console.log(res)
@@ -334,7 +332,8 @@ export default {
         // 将分类变为字符串
         form.goods_cat = form.goods_cat.join(',')
         console.log(form)
-        const { data: res } = await this.$http.post('goods', form)
+        const { data: res } = await addGoodsRequest(form)
+        // const { data: res } = await this.$http.post('goods', form)
         console.log(res)
         if (res.meta.status !== 201) {
           return this.$message.error('创建商品失败')

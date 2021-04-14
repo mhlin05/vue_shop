@@ -132,7 +132,13 @@
 
 <script>
 import Breadcrumb from '../Breadcrumb/Breadcrumb.vue'
-
+import {
+  getParentsCateDataRequest,
+  getCateDataRequest,
+  addCateRequest,
+  editCateRequest,
+  deleteCateRequest
+} from '@/api/category.js'
 export default {
   components: { Breadcrumb },
   data() {
@@ -208,9 +214,10 @@ export default {
   methods: {
     // 获取分页的 分类数据
     async getCategoriesData() {
-      const { data: res } = await this.$http.get('categories', {
-        params: this.queryInfo
-      })
+      // const { data: res } = await this.$http.get('categories', {
+      //   params: this.queryInfo
+      // })
+      const { data: res } = await getCateDataRequest(this.queryInfo)
       if (res.meta.status !== 200) {
         return this.$message.error('获取商品分类失败')
       }
@@ -244,11 +251,7 @@ export default {
     },
     // 获取父类分类
     async getParentCategories() {
-      const { data: res } = await this.$http.get('categories', {
-        params: {
-          type: 2
-        }
-      })
+      const { data: res } = await getParentsCateDataRequest()
       this.parentCateData = res.data
     },
     // 监听级联选择器 当选中节点变化时触发
@@ -270,10 +273,7 @@ export default {
     // 确认   添加分类
     async addCategories() {
       // console.log(this.addCateFormData)
-      const { data: res } = await this.$http.post(
-        'categories',
-        this.addCateFormData
-      )
+      const { data: res } = await addCateRequest(this.addCateFormData)
       if (res.meta.status !== 201) {
         return this.$message.error('创建分类失败')
       }
@@ -297,10 +297,11 @@ export default {
           this.editCateData.categoriesName,
           this.editCateData.categoriesId
         )
-        const { data: res } = await this.$http.put(
-          'categories/' + this.editCateData.categoriesId,
-          { cat_name: this.editCateData.categoriesName }
-        )
+        const { data: res } = await editCateRequest(this.editCateData)
+        // const { data: res } = await this.$http.put(
+        //   'categories/' + this.editCateData.categoriesId,
+        //   { cat_name: this.editCateData.categoriesName }
+        // )
         console.log(res)
         if (res.meta.status !== 200) return this.$message.error('更新分类失败')
         this.$message.success('更新分类成功')
@@ -318,7 +319,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const { data: res } = await this.$http.delete(`categories/${id}`)
+          const { data: res } = await deleteCateRequest(id)
           console.log(res)
           if (res.meta.status !== 200) {
             return this.$message.error('删除失败')

@@ -220,7 +220,14 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb.vue'
-
+import { getCateDataRequest } from '@/api/category.js'
+import {
+  getParamsListRequest,
+  addParamsRequest,
+  editParamsRequest,
+  deleteParamsRequest
+} from '@/api/params.js'
+import { addAttributeRequest, deleteAttributeRequest } from '@/api/attribute.js'
 export default {
   components: {
     Breadcrumb
@@ -303,13 +310,17 @@ export default {
         this.onlyTableData = []
         return this.$message.error('请选择三级分类')
       } else {
-        const { data: res } = await this.$http.get(
-          `categories/${this.selectedId}/attributes`,
-          {
-            params: {
-              sel: this.activeName
-            }
-          }
+        // const { data: res } = await this.$http.get(
+        //   `categories/${this.selectedId}/attributes`,
+        //   {
+        //     params: {
+        //       sel: this.activeName
+        //     }
+        //   }
+        // )
+        const { data: res } = await getParamsListRequest(
+          this.selectedId,
+          this.activeName
         )
         if (res.meta.status !== 200) {
           this.$message.error('获取参数列表失败')
@@ -327,7 +338,7 @@ export default {
     },
     //   获取分类数据
     async getAllGoodsCate() {
-      const { data: res } = await this.$http.get('categories')
+      const { data: res } = await getCateDataRequest()
       //   console.log(res.data)
       if (res.meta.status !== 200) {
         return this.$message.error('获取分类失败')
@@ -360,14 +371,12 @@ export default {
         if (!valid) {
           return this.$message.error('表单验证不通过')
         } else {
-          const { data: res } = await this.$http.post(
-            `categories/${this.selectedKeys[2]}/attributes`,
-            {
-              attr_id: this.selectedKeys[2],
-              attr_name: this.addFormData.attr_name,
-              attr_sel: this.activeName
-            }
+          const { data: res } = await addParamsRequest(
+            this.selectedKeys[2],
+            this.addFormData.attr_name,
+            this.activeName
           )
+
           if (res.meta.status !== 201) {
             return this.$message.error('添加失败')
           } else {
@@ -397,8 +406,12 @@ export default {
     },
     // 提交修改参数名称函数
     async nameUpdate() {
-      const { data: res } = await this.$http.put(
-        `categories/${this.selectedKeys[2]}/attributes/${this.editFormData.attrId}`,
+      // const { data: res } = await this.$http.put(
+      //   `categories/${this.selectedKeys[2]}/attributes/${this.editFormData.attrId}`,
+      //   this.editFormData
+      // )
+      const { data: res } = await editParamsRequest(
+        this.selectedKeys[2],
         this.editFormData
       )
       if (res.meta.status !== 200) {
@@ -418,9 +431,11 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const { data: res } = await this.$http.delete(
-            `categories/${this.selectedKeys[2]}/attributes/${row.attr_id}`
+          const { data: res } = await deleteParamsRequest(
+            this.selectedKeys[2],
+            row.attr_id
           )
+
           if (res.meta.status !== 200) {
             return this.$message.error('删除失败')
           } else {
@@ -457,14 +472,15 @@ export default {
         vals.push(inputValue)
         vals = vals.join(',')
         console.log(vals)
-        const { data: res } = await this.$http.put(
-          `categories/${this.editFormData.id}/attributes/${this.editFormData.attrId}`,
-          {
-            attr_name: this.editFormData.attr_name,
-            attr_sel: this.editFormData.attr_sel,
-            attr_vals: vals
-          }
-        )
+        // const { data: res } = await this.$http.put(
+        //   `categories/${this.editFormData.id}/attributes/${this.editFormData.attrId}`,
+        //   {
+        //     attr_name: this.editFormData.attr_name,
+        //     attr_sel: this.editFormData.attr_sel,
+        //     attr_vals: vals
+        //   }
+        // )
+        const { data: res } = await addAttributeRequest(this.editFormData, vals)
         console.log(res)
         if (res.meta.status !== 200) {
           return this.$message.error('添加失败')
@@ -479,13 +495,10 @@ export default {
     async handleClose(row, index) {
       // 在attr_vals中删除 tag
       row.attr_vals.splice(index, 1)
-      const { data: res } = await this.$http.put(
-        `categories/${this.selectedId}/attributes/${row.attr_id}`,
-        {
-          attr_name: row.attr_name,
-          attr_sel: this.activeName,
-          attr_vals: row.attr_vals.join(',')
-        }
+      const { data: res } = await deleteAttributeRequest(
+        this.selectedId,
+        this.activeName,
+        row
       )
       if (res.meta.status !== 200) {
         return this.$message.error('更新失败')

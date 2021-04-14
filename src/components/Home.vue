@@ -20,8 +20,8 @@
             text-color="#fff"
             active-text-color="#409EFF"
             unique-opened
-            :collapse = "iscollapse"
-            :collapse-transition='false'
+            :collapse="iscollapse"
+            :collapse-transition="false"
             :router="true"
             :default-active="activePath"
           >
@@ -32,12 +32,12 @@
               :key="item.id"
             >
               <template slot="title">
-                <i :class='iconsObj[item.id]'></i>
+                <i :class="iconsObj[item.id]"></i>
                 <span>{{ item.authName }}</span>
               </template>
               <!-- 二级菜单 -->
               <el-menu-item
-                :index=" '/' + subItem.path "
+                :index="'/' + subItem.path"
                 v-for="subItem in item.children"
                 :key="subItem.id"
                 @click="saveNavState('/' + subItem.path)"
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import Request from '@/utils/request.js'
 export default {
   data() {
     return {
@@ -102,7 +103,11 @@ export default {
     },
     // 获取菜单数据
     async getMenuList() {
-      const { data: res } = await this.$http.get('menus')
+      // const { data: res } = await this.$http.get('menus')
+      const { data: res } = await Request({
+        url: 'menus',
+        method: 'get'
+      })
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
       // console.log(res)
@@ -157,7 +162,7 @@ export default {
   height: 100%;
 }
 .toggle-button {
-  background-color: #4A5064;
+  background-color: #4a5064;
   font-size: 10px;
   line-height: 24px;
   color: #fff;
