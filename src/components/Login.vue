@@ -85,8 +85,8 @@ export default {
 }
 
 .login_box {
-  width: 450px;
-  height: 300px;
+  width: 30rem;
+  height: 20rem;
   background-color: #fff;
   border-radius: 3px;
   position: absolute;
@@ -95,14 +95,14 @@ export default {
   transform: translate(-50%, -50%);
 
   .avatar_box {
-    height: 130px;
-    width: 130px;
+    height: 10rem;
+    width: 8.66rem;
     border: 1px solid #eee;
     border-radius: 50%;
-    padding: 10px;
+    padding: 1rem;
     position: absolute;
     left: 50%;
-    box-shadow: 0 0 10px #ddd;
+    box-shadow: 0 0 1rem #ddd;
     transform: translate(-50%, -50%);
     background-color: #fff;
     img {
@@ -117,7 +117,7 @@ export default {
     position: absolute;
     bottom: 0%;
     width: 100%;
-    padding: 0 30px;
+    padding: 0 3rem;
     box-sizing: border-box;
   }
 }

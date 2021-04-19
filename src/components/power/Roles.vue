@@ -401,7 +401,7 @@ export default {
   align-items: flex-start;
 }
 .el-tag {
-  margin: 7px;
+  margin: 0.5rem;
 }
 
 .line_top {

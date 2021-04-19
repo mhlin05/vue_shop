@@ -178,7 +178,7 @@ export default {
 
 <style lang="less" scoped>
 .btn {
-  margin-left: 20px;
+  margin-left: 1.2rem;
 }
 .paginationStyle {
   display: flex;

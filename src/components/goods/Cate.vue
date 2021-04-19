@@ -348,7 +348,7 @@ export default {
   align-items: flex-start;
 }
 .treetable {
-  margin-top: 20px;
+  margin-top: 1.5rem;
 }
 .el-cascader {
   width: 100%;

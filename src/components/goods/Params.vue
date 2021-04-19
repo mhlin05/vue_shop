@@ -538,18 +538,19 @@ export default {
 
 <style lang="less" scoped>
 .el-tag {
-  margin-left: 10px;
+  margin-left: 0.8rem;
+  height: 2.1rem;
 }
 .button-new-tag {
-  margin-left: 10px;
-  height: 32px;
-  line-height: 30px;
+  margin-left: 0.8rem;
+  height: 2.1rem;
+  line-height: 2rem;
   padding-top: 0;
   padding-bottom: 0;
 }
 .input-new-tag {
-  width: 90px;
-  margin-left: 10px;
+  width: 5rem;
+  margin-left: 0.8rem;
   vertical-align: bottom;
 }
 </style>

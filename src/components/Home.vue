@@ -131,12 +131,16 @@ export default {
   // 使按钮居中显示 不贴边
   align-items: center;
   color: #fff;
-  font-size: 20px;
+  font-size: 1.3rem;
+  width: 100%;
   > div {
     display: flex;
     align-items: center;
+    > img {
+      margin-left: 0.5rem;
+    }
     > span {
-      margin-left: 15px;
+      margin-left: 2rem;
     }
   }
 }
@@ -144,12 +148,27 @@ export default {
   background-color: #333744;
   align-items: center;
   text-align: center;
+
   .el-menu {
     border-right: 0;
-    // .el-submenu {
-    //   display: flex;
-    //   align-items: flex-start;
-    // }
+    // display: grid;
+    // justify-content: center;
+    // align-items: center;
+
+    .el-submenu {
+      align-items: flex-start;
+
+      // text-align: center;
+      span {
+        font-size: 0.9rem;
+      }
+      .el-submenu__title {
+        position: absolute;
+        top: 50%;
+        left: 25%;
+        // padding-left: 0;
+      }
+    }
   }
 }
 .el-main {
@@ -163,8 +182,8 @@ export default {
 }
 .toggle-button {
   background-color: #4a5064;
-  font-size: 10px;
-  line-height: 24px;
+  font-size: 0.7rem;
+  line-height: 1.7rem;
   color: #fff;
   text-align: center;
   letter-spacing: 0.2em;

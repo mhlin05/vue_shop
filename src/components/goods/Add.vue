@@ -359,10 +359,10 @@ export default {
 
 <style lang="less" scoped>
 .steps_style {
-  margin-top: 30px;
+  margin-top: 3rem;
 }
 .tabs_style {
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 .vals_style {
   margin-left: 20px;
@@ -371,12 +371,12 @@ export default {
   // }
 }
 .el-checkbox {
-  margin: 0 10px 0 0 !important;
+  margin: 0 0.5rem 0 0 !important;
 }
 .imgstyle {
   width: 100%;
 }
 .addBtn {
-  margin: 20px 0 0 0;
+  margin: 1.2rem 0 0 0;
 }
 </style>
